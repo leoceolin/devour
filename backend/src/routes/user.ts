@@ -1,5 +1,6 @@
 import express from "express";
 import { UserModel } from "../models/User";
+import { CommunityModel } from "../models/Community";
 
 const userRouter = express.Router();
 
@@ -47,8 +48,24 @@ userRouter.get("/", async (_, res) => {
  */
 userRouter.post("/:userId/join/:communityId", async (req, res) => {
 	const { userId, communityId } = req.params;
-	// TODO: Implement the functionality to join a community
-	res.status(501).send();
+	const user = await UserModel.findById(userId)
+	const community = await CommunityModel.findById(communityId)
+
+	if (user?.communityId) {
+		return res.status(409).send({ message: "User already in a community" });
+	}
+
+	await UserModel.updateOne(
+		{ _id: userId },
+		{
+			$set: {
+				communityId: communityId,
+			},
+		},
+		{ upsert: true }
+	);
+
+	res.status(200).send({ message: `User joined with success in the community: ${community?.name}` });
 });
 
 /**
@@ -59,10 +76,26 @@ userRouter.post("/:userId/join/:communityId", async (req, res) => {
  */
 userRouter.delete("/:userId/leave/:communityId", async (req, res) => {
 	const { userId, communityId } = req.params;
-	// TODO: Implement the functionality to leave a community
-	res.status(501).send();
+	const user = await UserModel.findById(userId)
+	const community = await CommunityModel.findById(communityId)
+
+	if (!user?.communityId) {
+		return res.status(409).send({ message: "User does not belong to a community" });
+	}
+
+	await UserModel.updateOne(
+		{ _id: userId },
+		{
+			$unset: {
+				communityId: 1,
+			},
+		},
+		{ upsert: true }
+	);
+
+	res.status(200).send({ message: `The user has successfully left the community:: ${community?.name}` });
 });
 
 export {
-    userRouter
+	userRouter
 }
