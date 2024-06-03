@@ -1,6 +1,5 @@
 import express from "express";
-import { UserModel } from "../models/User";
-import { CommunityModel } from "../models/Community";
+import { CommunityModel, UserModel } from "../models";
 
 const userRouter = express.Router();
 
@@ -11,6 +10,7 @@ const userRouter = express.Router();
  */
 userRouter.get("/:id", async (req, res) => {
 	const user = await UserModel.findById(req.params.id).select('+experiencePoints');
+
 	if (!user) {
 		return res.status(404).send({ message: "User not found" });
 	}
@@ -33,7 +33,8 @@ userRouter.get("/", async (_, res) => {
 				_id: "$_id",
 				email: { $first: "$email" },
 				profilePicture: { $first: "$profilePicture" },
-				totalExperience: { $sum: "$experiencePoints.points" }
+				totalExperience: { $sum: "$experiencePoints.points" },
+				commId: { $first: "$communityId" }
 			}
 		}
 	]);
@@ -49,6 +50,7 @@ userRouter.get("/", async (_, res) => {
 userRouter.post("/:userId/join/:communityId", async (req, res) => {
 	const { userId, communityId } = req.params;
 	const user = await UserModel.findById(userId)
+
 	const community = await CommunityModel.findById(communityId)
 
 	if (user?.communityId) {

@@ -1,7 +1,6 @@
 import express from "express";
-import { UserModel } from '../models/User';
-import { CommunityModel } from '../models/Community';
 import crypto from 'crypto';
+import { CommunityModel, UserModel } from "../models";
 
 const utilsRouter = express.Router();
 
@@ -44,7 +43,7 @@ utilsRouter.get("/inflate-db", async (_, res) => {
             for (let j = 0; j < numberOfEntries; j++) {
                 const randomDate = new Date(oneYearAgo.getTime() + Math.random() * (now.getTime() - oneYearAgo.getTime()));
                 const randomPoints = Math.floor(Math.random() * 101);
-                experiencePoints.push({points: randomPoints, timestamp: randomDate});
+                experiencePoints.push({ points: randomPoints, timestamp: randomDate });
             }
 
             const user = new UserModel({
@@ -59,7 +58,7 @@ utilsRouter.get("/inflate-db", async (_, res) => {
         for (let i = 0; i < COMMUNITIES_COUNT; i++) {
             const community = new CommunityModel({
                 name: `Community ${i}`,
-                logo: `https://picsum.photos/200?random=${i+USERS_COUNT}`,
+                logo: `https://picsum.photos/200?random=${i + USERS_COUNT}`,
             });
             await community.save();
         }

@@ -1,5 +1,5 @@
 import express from "express";
-import { CommunityModel } from "../models/Community";
+import { CommunityModel, } from "../models";
 
 const communityRouter = express.Router();
 
@@ -22,9 +22,10 @@ communityRouter.get("/:id", async (req, res) => {
  */
 communityRouter.get("/", async (_, res) => {
 	const communities = await CommunityModel.find({}).lean();
+
 	res.send(communities);
 });
 
 export {
-    communityRouter
+	communityRouter
 }
