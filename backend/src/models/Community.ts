@@ -1,11 +1,10 @@
-import { prop, getModelForClass } from '@typegoose/typegoose';
+import { prop, } from '@typegoose/typegoose';
 
-class Community {
+
+export class Community {
 	@prop({ required: true })
 	public name?: string;
 
 	@prop()
 	public logo?: string;
 }
-
-export const CommunityModel = getModelForClass(Community);

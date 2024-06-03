@@ -1,7 +1,7 @@
-import { prop, getModelForClass, Ref } from '@typegoose/typegoose';
-import { CommunityModel } from './Community';
+import { prop, Ref } from '@typegoose/typegoose';
+import { CommunityModel } from '.';
 
-class User {
+export class User {
 	@prop({ required: true })
 	public email?: string;
 
@@ -14,8 +14,6 @@ class User {
 	@prop({ required: true, select: false, default: [] })
 	public experiencePoints?: { points: number, timestamp: Date }[];
 
-	@prop({ ref: () => CommunityModel })
+	@prop({ ref: () => "CommunityModel" })
 	public communityId?: Ref<typeof CommunityModel>;
 }
-
-export const UserModel = getModelForClass(User);
